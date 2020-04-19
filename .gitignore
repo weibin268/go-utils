@@ -1,0 +1,9 @@
+### VS Code ###
+.vscode/
+
+# Self
+bin/
+packages/
+release/
+test/bin/
+vendor/
