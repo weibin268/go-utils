@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// ReadAllText 读取文本文件
 func ReadAllText(filePath string) string {
 	var text string
 	file, err := os.Open(filePath)

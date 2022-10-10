@@ -5,6 +5,7 @@ import (
 	"os/exec"
 )
 
+// Call 调用终端命令
 func Call(name string, arg ...string) (string, error) {
 	var buff bytes.Buffer
 	var errBuff bytes.Buffer
