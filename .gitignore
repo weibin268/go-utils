@@ -7,3 +7,6 @@ packages/
 release/
 test/bin/
 vendor/
+
+# Idea
+.idea/**
