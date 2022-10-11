@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-// ReadAllText 读取文本文件
-func ReadAllText(filePath string) string {
+// ReadText 读取文本文件
+func ReadText(filePath string) string {
 	var text string
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -19,4 +19,15 @@ func ReadAllText(filePath string) string {
 	}
 	text = string(data)
 	return text
+}
+
+func WriteText(filePath string, text string) {
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0766)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = io.WriteString(file, text)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
