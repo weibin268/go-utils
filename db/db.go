@@ -12,7 +12,7 @@ import (
 
 var Db *sqlx.DB
 
-func init() {
+func InitDb() {
 	// 读取配置文件
 	config := viper.New()
 	config.SetConfigName("db.ini")
@@ -34,6 +34,44 @@ func init() {
 		return
 	}
 	Db = database
+}
+
+func CloseDb() {
+	Db.Close()
+}
+
+func QueryMaps(sqlStr string, args ...interface{}) ([]map[string]string, error) {
+	rows, err := Db.Query(sqlStr, args...)
+	if err != nil {
+		return nil, err
+	}
+	//函数结束释放链接
+	defer rows.Close()
+	//读出查询出的列字段名
+	cols, _ := rows.Columns()
+	//values是每个列的值，这里获取到byte里
+	values := make([][]byte, len(cols))
+	//query.Scan的参数，因为每次查询出来的列是不定长的，用len(cols)定住当次查询的长度
+	scans := make([]interface{}, len(cols))
+	//让每一行数据都填充到[][]byte里面,狸猫换太子
+	for i := range values {
+		scans[i] = &values[i]
+	}
+	results := make([]map[string]string, 0, 10)
+	for rows.Next() {
+		err := rows.Scan(scans...)
+		if err != nil {
+			return nil, err
+		}
+		row := make(map[string]string, 10)
+		for k, v := range values { //每行数据是放在values里面，现在把它挪到row里
+			key := cols[k]
+			row[key] = string(v)
+		}
+		results = append(results, row)
+	}
+	//返回数据
+	return results, nil
 }
 
 func ExecSqlFromFile() {
