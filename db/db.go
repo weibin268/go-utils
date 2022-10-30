@@ -76,6 +76,7 @@ func QueryMaps(sqlStr string, args ...interface{}) ([]map[string]string, error) 
 }
 
 func ExecSqlFromFile() {
+	// 命令行参数
 	var sqlFile string
 	var sqlType string
 	flag.StringVar(&sqlFile, "f", "db.sql", "sql file")
@@ -84,6 +85,7 @@ func ExecSqlFromFile() {
 
 	strSql := io.ReadText(sqlFile)
 	if sqlType == "query" {
+		// 查询
 		rows, err := QueryMaps(strSql)
 		if err != nil {
 			log.Fatal(err)
@@ -107,6 +109,7 @@ func ExecSqlFromFile() {
 			fmt.Printf("\n")
 		}
 	} else {
+		// 更新
 		result, err := Db.Exec(strSql)
 		if err != nil {
 			log.Fatal(err)
