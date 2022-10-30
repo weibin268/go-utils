@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"log"
+	"sort"
 	"testing"
 )
 
@@ -27,13 +28,25 @@ func TestGet(t *testing.T) {
 func TestQueryMaps(t *testing.T) {
 	InitDb()
 	defer CloseDb()
-	maps, err := QueryMaps("select * from sys_user")
+	rows, err := QueryMaps("select * from sys_user")
 	if err != nil {
 		log.Fatal(err)
 	}
-	for _, m := range maps {
-		for k, v := range m {
-			fmt.Printf("%v:%v|", k, v)
+	var colums []string
+	for _, r := range rows {
+		if colums == nil {
+			for k, _ := range r {
+				colums = append(colums, k)
+			}
+			sort.Strings(colums)
+			for _, c := range colums {
+				fmt.Printf("%v|", c)
+			}
+			fmt.Printf("\n")
+		}
+		for _, k := range colums {
+			s := r[k]
+			fmt.Printf("%v|", s)
 		}
 		fmt.Printf("\n")
 	}
