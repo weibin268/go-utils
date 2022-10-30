@@ -1,13 +1,14 @@
 package db
 
 import (
+	"flag"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
 	"github.com/weibin268/go-utils/io"
 	"log"
-	"os"
+	"sort"
 )
 
 var Db *sqlx.DB
@@ -75,14 +76,40 @@ func QueryMaps(sqlStr string, args ...interface{}) ([]map[string]string, error) 
 }
 
 func ExecSqlFromFile() {
-	fileName := "db.sql"
-	if len(os.Args) > 1 {
-		fileName = os.Args[1]
+	var sqlFile string
+	var sqlType string
+	flag.StringVar(&sqlFile, "f", "db.sql", "sql file")
+	flag.StringVar(&sqlType, "t", "", "sql file")
+
+	strSql := io.ReadText(sqlFile)
+	if sqlType == "query" {
+		rows, err := QueryMaps(strSql)
+		if err != nil {
+			log.Fatal(err)
+		}
+		var colums []string
+		for _, r := range rows {
+			if colums == nil {
+				for k, _ := range r {
+					colums = append(colums, k)
+				}
+				sort.Strings(colums)
+				for _, c := range colums {
+					fmt.Printf("%v|", c)
+				}
+				fmt.Printf("\n")
+			}
+			for _, k := range colums {
+				s := r[k]
+				fmt.Printf("%v|", s)
+			}
+			fmt.Printf("\n")
+		}
+	} else {
+		result, err := Db.Exec(strSql)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(result.RowsAffected())
 	}
-	strSql := io.ReadText(fileName)
-	result, err := Db.Exec(strSql)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(result.RowsAffected())
 }
