@@ -10,3 +10,6 @@ vendor/
 
 # Idea
 .idea/**
+
+# go
+go.sum
