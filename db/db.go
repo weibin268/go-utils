@@ -5,6 +5,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
+	"github.com/weibin268/go-utils/io"
+	"log"
+	"os"
 )
 
 var Db *sqlx.DB
@@ -31,4 +34,17 @@ func init() {
 		return
 	}
 	Db = database
+}
+
+func ExecSqlFromFile() {
+	fileName := "db.sql"
+	if len(os.Args) > 1 {
+		fileName = os.Args[1]
+	}
+	strSql := io.ReadText(fileName)
+	result, err := Db.Exec(strSql)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(result.RowsAffected())
 }
