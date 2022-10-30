@@ -20,3 +20,13 @@ func TestQuery(t *testing.T) {
 	}
 	fmt.Println(u)
 }
+
+func TestExec(t *testing.T) {
+	rs, err := Db.Exec("select * from sys_user")
+	if err != nil {
+		fmt.Printf("query faied, error:[%v]", err.Error())
+		return
+	}
+	affected, err := rs.RowsAffected()
+	fmt.Printf("exec success! rowsAffected -> %v", affected)
+}
