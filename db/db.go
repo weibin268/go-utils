@@ -79,7 +79,8 @@ func ExecSqlFromFile() {
 	var sqlFile string
 	var sqlType string
 	flag.StringVar(&sqlFile, "f", "db.sql", "sql file")
-	flag.StringVar(&sqlType, "t", "", "sql file")
+	flag.StringVar(&sqlType, "t", "", "sql type: query、update")
+	flag.Parse()
 
 	strSql := io.ReadText(sqlFile)
 	if sqlType == "query" {
